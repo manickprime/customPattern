@@ -1,0 +1,20 @@
+table#matchedLogs .fa {
+    visibility: hidden;
+}
+table#matchedLogs td:hover .fa {
+    visibility: visible;
+}
+
+table {
+
+    width: 350px;
+}
+
+
+td {
+    word-wrap: break-word;
+}
+
+FileSelector {
+    padding: 25px 50px 75px 100px;
+}
