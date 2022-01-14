@@ -21,6 +21,14 @@ public class LogUpload extends HttpServlet{
 		
 		
 		String HLLseparator = req.getParameter("separator");
+		
+		
+		database_DAO db = new database_DAO();
+		db.connect();
+		
+		String regex[] = db.getIncludedRules();
+		db.closeConnection();
+//		String regex[] = req.getParameterValues("regexArray");
 //		if(separator.equals("l"))
 //			separator = "|";
 		String separator;
@@ -39,16 +47,12 @@ public class LogUpload extends HttpServlet{
 		String filePath = req.getParameter("fileName");
 		String eSResponse = null;
 		
-//		separator = " ";
 		
 		
-//		String filePath = "C:\\Users\\mani-pt4556\\Downloads\\DhcpSrvLog-Mon.log.txt";
-//		String filePath = "D:\\dummy.txt";
-//		String filePath = "D:\\space.txt";
-		
-		
-//		filePath = "D:\\space.txt";
-//		separator = " ";
+		for(int i=0;i<regex.length;i++) {
+			System.out.println(regex[i]);
+		}
+
 		
 		try {					
 			FileInputStream fis = new FileInputStream(filePath);
@@ -70,20 +74,44 @@ public class LogUpload extends HttpServlet{
 			boolean start = true;
 			while ((thisLine = myInput.readLine()) != null){
 				row1 = thisLine.split(separator);
+//				Pattern ptrn = Pattern.compile(regex[0]);
+//				Matcher m = ptrn.matcher(thisLine);
+//				if(m.matches()) {
+//					System.out.println(thisLine);
+//					System.out.println("=================");
+//				} else {
+//					
+//				}
+				
+				if(Pattern.matches( regex[0] , thisLine)) {
+					System.out.println(thisLine);
+					System.out.println("=================");
+					if(separator!="\\|") {}
+					else {
+						es.insertRow(row1, thisLine);
+						if(!start) eSResponse += ", ";
+						eSResponse += "{ \"data\":\"";
+						for(int i=0;i<row1.length;i++) {
+							eSResponse += row1[i] + ",";
+						}
+						eSResponse += "\"}";
+						start = false;
+						
+					}
+				}
 
-					
-//				for(int i=0;i<row1.length;i++)
-//					System.out.print(row1[i]+"::");
 				
-//				es.insertRow(row1, currentLine, thisLine);
+				/*
 				
-//				System.out.println();
-				if(separator!="\\|")
+				es.insertRow(row1, currentLine, thisLine);
+				
+				System.out.println();
+				if(separator!="\\|") {}
 					es.insertRow(row1, currentLine, thisLine);
 				else {
-//					es.insertRow(row1, thisLine);
+					es.insertRow(row1, thisLine);
 					
-//					if(!start) eSResponse += ", ";
+					if(!start) eSResponse += ", ";
 					String prefix = "dmac=", suffix = "", field = "00:";
 					String p = Pattern.quote(prefix + field + suffix);
 					p = ".*" + p + ".*";
@@ -93,10 +121,10 @@ public class LogUpload extends HttpServlet{
 					
 					System.out.println(p);
 					Matcher m = pattern.matcher(thisLine);
-//					System.out.println(m.matches());
-//					Pattern pattern = Pattern.compile("^.*msg=User.*$");
-//					eSResponse += "{ \"data\":\"";
-//					Matcher m = pattern.matcher(thisLine);
+					System.out.println(m.matches());
+					Pattern pattern = Pattern.compile("^.*msg=User.*$");
+					eSResponse += "{ \"data\":\"";
+					Matcher m = pattern.matcher(thisLine);
 					if(m.matches()) {
 						System.out.println(thisLine);
 						
@@ -112,31 +140,35 @@ public class LogUpload extends HttpServlet{
 						start = false;
 						
 					}
-//					for(int i=0;i<row1.length;i++) {
-//						eSResponse += row1[i] + ",";
-//						
-//					}
-//					
-//					eSResponse += "\"}";				
-//					start = false;
+					for(int i=0;i<row1.length;i++) {
+						eSResponse += row1[i] + ",";
+						
+					}
+					
+					eSResponse += "\"}";				
+					start = false;
 				}
+				*/
 				
 			}	
 				
 			eSResponse += "]";
+			System.out.println(eSResponse);
 			myInput.close();			
 		} catch (Exception ex) {
 			System.out.println("Error while traversing csv in the server side: " + ex);
 		}
-		
-//		System.out.println("tada1");
+		/*
+		System.out.println("tada1");
 		if(separator!="\\|")
 			eSResponse = es.getLogs();
-//		System.out.println("tada5");
+		System.out.println("tada5");
 		
 		System.out.println(eSResponse);
 		out.println(eSResponse);
+		*/
 		
+		out.println(eSResponse);
 	}
 	
 }

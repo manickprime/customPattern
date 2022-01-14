@@ -1,6 +1,9 @@
 package com.manick;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,11 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
 
-
-@WebServlet("/addPattern")
-public class AddPattern extends HttpServlet {
-       
+@WebServlet("/generatePattern")
+public class generatePattern extends HttpServlet{
 	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 //		String regex = "@v {manick}55";
 //		Xeger generator = new Xeger(regex);
@@ -53,27 +55,16 @@ public class AddPattern extends HttpServlet {
 		System.out.println(regex);
 //		
 		
+		
+		HashMap<String, String> map = new HashMap<>();
+		map.put("regex", regex);
+		
+		String jSONResult = new Gson().toJson(map);
+		System.out.println(jSONResult);
+		
 		System.out.println(fieldJSONstring);
-		database_DAO db = new database_DAO();
-		db.connect();
-		db.insertConstraint(ruleName, fieldJSONstring, regex);
-		db.closeConnection();
-		
-		
-//		String prefix = "", suffix = "request", field = "hostname";
-//		String p = Pattern.quote(prefix + " " + field + " " + suffix);
-//		Pattern pattern = Pattern.compile(p);
-//		
-//		Matcher m = pattern.matcher("dvchost=hostname request");
-//		System.out.println(m.matches());
-//		
-//		System.out.println(p);
-//		Pattern p = Pattern.compile("{manick}}55");
-//		Matcher m = p.matcher()
-		
-//		System.out.println("Generated regex:");
-//		System.out.println(result);
-//		System.out.println(generator);
-	}
+		PrintWriter out = res.getWriter();
+		out.println(jSONResult);
 
+	}
 }

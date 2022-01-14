@@ -1,0 +1,28 @@
+<h1>Hello!</h1>
+
+<ul class="nav nav-tabs">
+			<li class="nav-item">
+				<p id="constraintNavID" class="nav-link active" aria-current="page" {{on 'click' this.changeToConstraint}}>Constraint</p>
+			</li>
+			<li class="nav-item">
+				<p id="reportNavID" class="nav-link" aria-current="page" {{on 'click' this.changeToReport}}>Report</p>
+			</li>
+		</ul>
+
+<div id="constraint">
+    <div id="home">
+        <br>
+        <h1>Tab constraint</h1>
+
+    </div>
+</div>
+
+<div id="report">
+    <div id="home1">
+        <h1>Report constraint
+
+        </h1>
+    </div>
+</div>
+
+{{yield}}

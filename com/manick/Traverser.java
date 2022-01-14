@@ -67,7 +67,11 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 			eSResponse = "[";
 			String row1[];
 			boolean start = true;
+			int linesTraversed = 0;
 			while ((thisLine = myInput.readLine()) != null){
+				linesTraversed++;
+				if(linesTraversed >= 10) break;
+				
 				row1 = thisLine.split(separator);
 
 					

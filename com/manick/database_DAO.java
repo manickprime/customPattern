@@ -2,8 +2,11 @@ package com.manick;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class database_DAO {
 	
@@ -44,7 +47,7 @@ public class database_DAO {
 	    		if(!conn.isClosed()){
 	    			
 //	 	 			SQLquery = "INSERT INTO fields values (\"" + ruleName + "\",\""+ fieldsJSON + "\",\"" + regex + "\")";  
-	    			SQLquery = "INSERT INTO fields values ('" + ruleName + "','"+ fieldsJSON + "','" + regex + "')";
+	    			SQLquery = "INSERT INTO fields values ('" + ruleName + "','"+ fieldsJSON + "','" + regex + "', 0)";
 	 				System.out.println(SQLquery);
 	 	 			st.executeUpdate(SQLquery);
 	    		}
@@ -52,4 +55,163 @@ public class database_DAO {
 				System.out.println("Error while inserting fields: "+ex);
 			} 
 		}
+		
+		// to get the names of all the rules in the database
+		public String[] getRulesName() {
+			ArrayList<String> rules = new ArrayList<String>();
+			
+			try {
+				if(!conn.isClosed()) {
+					
+					Statement st = conn.createStatement();
+					
+					ResultSet rs = st.executeQuery("SELECT ruleName FROM fields");
+					while(rs.next()) {
+						
+						String temp = rs.getString(1);
+						rules.add(temp);
+						
+					}
+				}
+				return rules.toArray(new String[0]);
+				
+			} catch (Exception ex) {
+				System.out.println("Error while getting rules and their status: " + ex);
+			}
+			return rules.toArray(new String[0]);
+		}
+		
+		
+		//to get rules name and flag variable from the database
+		public HashMap<String, Integer> getRuleNameAndStatus() {
+			HashMap<String, Integer> rules = new HashMap<String, Integer>();
+			String query = "SELECT ruleName,flag FROM fields";
+			
+			try {
+				if(!conn.isClosed()) {
+				
+					Statement st = conn.createStatement();
+				
+					ResultSet rs = st.executeQuery(query);
+					while(rs.next()) {
+					
+						String ruleName = rs.getString("ruleName");
+						int flag = rs.getInt("flag");
+						System.out.println(ruleName);
+						System.out.println(flag);
+						rules.put(ruleName, flag);
+					
+					}
+		
+					return rules;
+				}
+			
+			} catch (Exception ex) {
+				System.out.println("Error while getting rule name and status: " + ex);
+			}
+			return rules;
+		}
+		
+		
+		//to get rules name which are having status as 1
+		public String[] getIncludedRules() {
+			ArrayList<String> rules = new ArrayList<String>();
+			
+			try {
+				if(!conn.isClosed()) {
+					
+					Statement st = conn.createStatement();
+					
+//					ResultSet rs = st.executeQuery("SELECT ruleName FROM fields WHERE flag = 1");
+					ResultSet rs = st.executeQuery("SELECT regex FROM fields WHERE flag = 1");
+					while(rs.next()) {
+						
+//						String temp = rs.getString("ruleName");
+						String temp = rs.getString("regex");
+						rules.add(temp);
+						
+					}
+				}
+				return rules.toArray(new String[0]);
+				
+			} catch (Exception ex) {
+				System.out.println("Error while getting rules which are included: " + ex);
+			}
+			return rules.toArray(new String[0]);
+		}		
+	
+		//to get regex from the rule name in the database
+		public String getRegexFromName(String ruleName) {
+			String query = "SELECT regex FROM fields WHERE ruleName = '" + ruleName + "'";
+			String regex = null;
+			
+			try {
+				if(!conn.isClosed()) {
+				
+					Statement st = conn.createStatement();
+				
+					ResultSet rs = st.executeQuery(query);
+					while(rs.next()) {
+					
+						regex = rs.getString("regex");
+					
+					}
+		
+					return regex;
+				}
+			
+			} catch (Exception ex) {
+				System.out.println("Error while getting regex from database: " + ex);
+			}
+			return regex;
+		}
+		
+		
+		
+		//delete the specific rule  from the database
+		public void deleteThisRule(String ruleName) {
+			System.out.println("im going to delete a rule");
+			String query = "DELETE FROM fields WHERE ruleName = \"" + ruleName + "\"";
+			
+			try {
+				if(!conn.isClosed()) {
+				
+					Statement st = conn.createStatement();
+					st.executeUpdate(query);
+			
+				}
+			
+			} catch (Exception ex) {
+				System.out.println("Error while deleting single rule: " + ex);
+			}
+			
+		}
+		
+		//update the status of the rules when they're enabled by the user
+		public void updateStatus(String rules[]) {
+			String query;
+			try {
+			
+				Statement st = conn.createStatement();
+	    		if(!conn.isClosed()){
+	    			
+	 					query = "UPDATE fields SET flag=0 WHERE 1";
+	 					st.executeUpdate(query);
+	    			
+	    			System.out.println("updating in db");
+	 					
+	 					for(int i=0;i<rules.length;i++) {
+	 						query = "UPDATE fields SET flag=1 WHERE ruleName=\"";
+	 						query+= rules[i]+"\"";
+	 						System.out.println(query);
+	 	 	 				st.executeUpdate(query);
+	 					}	
+	    		}
+	   
+				
+			}  catch(Exception ex)	{
+				System.out.println("Error while updating including status of rules: "+ex);
+			} 
+		}
+
 }
