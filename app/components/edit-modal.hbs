@@ -1,0 +1,23 @@
+<button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fa fa-clone"></i></button>
+
+<!-- Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                                        <label for="exampleFormControlTextarea1">Edit rule:</label>
+                                        <p id="editRuleText"></p>
+                                        <textarea class="form-control" id="updatedRegex"
+                                            rows="2"></textarea>
+                                    </div>                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" {{on 'click' this.editRuleUpdate}}>Save</button>
+                        
+                    </div> 
+                </div>
+            </div>
+        </div>

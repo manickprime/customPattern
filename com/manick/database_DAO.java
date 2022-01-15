@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+//contains functions for all the sql based database activites
+
 public class database_DAO {
 	
 	Connection conn = null;
@@ -52,7 +54,7 @@ public class database_DAO {
 	 	 			st.executeUpdate(SQLquery);
 	    		}
 			}  catch(Exception ex)	{
-				System.out.println("Error while inserting fields: "+ex);
+				System.out.println("Error while inserting constraints in fields: "+ex);
 			} 
 		}
 		
@@ -121,12 +123,9 @@ public class database_DAO {
 				if(!conn.isClosed()) {
 					
 					Statement st = conn.createStatement();
-					
-//					ResultSet rs = st.executeQuery("SELECT ruleName FROM fields WHERE flag = 1");
 					ResultSet rs = st.executeQuery("SELECT regex FROM fields WHERE flag = 1");
 					while(rs.next()) {
-						
-//						String temp = rs.getString("ruleName");
+
 						String temp = rs.getString("regex");
 						rules.add(temp);
 						
@@ -149,12 +148,9 @@ public class database_DAO {
 				if(!conn.isClosed()) {
 				
 					Statement st = conn.createStatement();
-				
 					ResultSet rs = st.executeQuery(query);
 					while(rs.next()) {
-					
-						regex = rs.getString("regex");
-					
+						regex = rs.getString("regex");		
 					}
 		
 					return regex;
@@ -213,5 +209,24 @@ public class database_DAO {
 				System.out.println("Error while updating including status of rules: "+ex);
 			} 
 		}
+		
+		//update the rules when they're enabled by the user
+		public void updateRule(String ruleName, String updatedRegex) {
+			String query;
+			try {
+			
+				Statement st = conn.createStatement();
+	    		if(!conn.isClosed()){
+	    			
+	 					query = "UPDATE fields SET regex='" + updatedRegex +"' WHERE ruleName = '" + ruleName + "'";
+	 					st.executeUpdate(query);
+	    		
+	    		}
+	   
+				
+			}  catch(Exception ex)	{
+				System.out.println("Error while updating including rule's regex: "+ex);
+			} 
+		}		
 
 }

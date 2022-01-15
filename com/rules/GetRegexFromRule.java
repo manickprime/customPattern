@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.manick.database_DAO;
 
 
+/*
+ * Retrieves the regex from the rulename in the database
+ * */
+
 @WebServlet("/getRegexFromRule")
 public class GetRegexFromRule extends HttpServlet {
 

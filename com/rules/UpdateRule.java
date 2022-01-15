@@ -9,18 +9,23 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.manick.database_DAO;
 
-/*
- * Uploads the status of ruleNames whenever the user updates it manually
- * */
+/**
+ * Updates the rule on the database
+ */
+@WebServlet("/updateRule")
+public class UpdateRule extends HttpServlet {
 
-@WebServlet("/updateStatus")
-public class UpdateStatus extends HttpServlet {
-	
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		String ruleNames[] = req.getParameterValues("ruleNames[]");
+		
+		String ruleName = req.getParameter("ruleName");
+		String regex = req.getParameter("regex");
+		
+		System.out.println(ruleName);
+		System.out.println(regex);
+		
 		database_DAO db = new database_DAO();
 		db.connect();
-		db.updateStatus(ruleNames);
+		db.updateRule(ruleName, regex);
 		db.closeConnection();
 	}
 

@@ -27,7 +27,7 @@ import org.elasticsearch.search.suggest.completion.RegexOptions;
 
 import com.google.gson.JsonObject;
 
-
+//contains all the functions which can be done in the ESs
 
 public class ES_DAO {
 
@@ -47,11 +47,7 @@ public class ES_DAO {
 			
 			try {
 				
-				Class.forName("org.elasticsearch.xpack.sql.jdbc.EsDriver");
-//				Connection connection =
-//				    DriverManager.getConnection(address, connectionProperties);
-//				this.connection = connection;
-//				
+				Class.forName("org.elasticsearch.xpack.sql.jdbc.EsDriver");	
 				client = new RestHighLevelClient(
 				        RestClient.builder(
 				                new HttpHost("localhost", 9200, "http"),
@@ -90,29 +86,15 @@ public class ES_DAO {
 			    jsonMap.put("completeLog", completeLog);
 			    
 			    BulkRequest request = new BulkRequest();
-			    
-//			    jsonMap.put("name", "manick");
-//			    jsonMap.put("position", "PT-4556");
-			    
-
-
 			    IndexRequest indexRequest = new IndexRequest("logs").type("doc").source(jsonMap);
 			    
 			    
 			    request.add(indexRequest);
 			    BulkResponse response = client.bulk(request);
 			    
-			    
-//			    String index = indexResponse.getIndex();
-//			    String id = indexResponse.getId();
-			    
 			    IndexResponse indexResponse = client.index(indexRequest);
 			    
-//			    if (indexResponse.getResult() == DocWriteResponse.Result.CREATED) {
-//			        System.out.println("Log created");
-//			    } else if (indexResponse.getResult() == DocWriteResponse.Result.UPDATED) {
-//			    	System.out.println("Log updated");
-//			    }
+
 			    ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
 			    if (shardInfo.getTotal() != shardInfo.getSuccessful()) {
 			    	System.out.println("Shard successful");
@@ -135,37 +117,20 @@ public class ES_DAO {
 			try {
 
 			    
-			    Map<String, Object> jsonMap = new HashMap<>();
-//			    for(int i=0;i<row.length;i++) {
-//			    	jsonMap.put(headers[i], row[i]);
-//			    }
-			    
-			    
-			    
+			    Map<String, Object> jsonMap = new HashMap<>();		    
 			    BulkRequest request = new BulkRequest();
 			    
 			    jsonMap.put("completeLog", thisLine);
-//			    jsonMap.put("position", "PT-4556");
-			    
-
-
 			    IndexRequest indexRequest = new IndexRequest("logs").type("doc").source(jsonMap);
 			    
 			    
 			    request.add(indexRequest);
 			    BulkResponse response = client.bulk(request);
 			    
-			    
-//			    String index = indexResponse.getIndex();
-//			    String id = indexResponse.getId();
-			    
+    
 			    IndexResponse indexResponse = client.index(indexRequest);
 			    
-//			    if (indexResponse.getResult() == DocWriteResponse.Result.CREATED) {
-//			        System.out.println("Log created");
-//			    } else if (indexResponse.getResult() == DocWriteResponse.Result.UPDATED) {
-//			    	System.out.println("Log updated");
-//			    }
+
 			    ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
 			    if (shardInfo.getTotal() != shardInfo.getSuccessful()) {
 			    	System.out.println("Shard successful");
@@ -177,7 +142,6 @@ public class ES_DAO {
 			        }
 			    }
 			    
-	   
 			} catch (Exception e) {
 				System.out.println("Error while inserting log from ES: " + e.toString());
 			}
@@ -195,29 +159,16 @@ public class ES_DAO {
 					    }
 					    
 					    BulkRequest request = new BulkRequest();
-					    
-//					    jsonMap.put("name", "manick");
-//					    jsonMap.put("position", "PT-4556");
-					    
-
 
 					    IndexRequest indexRequest = new IndexRequest("logs").type("doc").source(jsonMap);
 					    
 					    
 					    request.add(indexRequest);
 					    BulkResponse response = client.bulk(request);
-					    
-					    
-//					    String index = indexResponse.getIndex();
-//					    String id = indexResponse.getId();
-					    
+   
 					    IndexResponse indexResponse = client.index(indexRequest);
 					    
-//					    if (indexResponse.getResult() == DocWriteResponse.Result.CREATED) {
-//					        System.out.println("Log created");
-//					    } else if (indexResponse.getResult() == DocWriteResponse.Result.UPDATED) {
-//					    	System.out.println("Log updated");
-//					    }
+
 					    ReplicationResponse.ShardInfo shardInfo = indexResponse.getShardInfo();
 					    if (shardInfo.getTotal() != shardInfo.getSuccessful()) {
 					    	System.out.println("Shard successful");
@@ -236,28 +187,9 @@ public class ES_DAO {
 				}
 			
 		
-				
+		//gets the uploaded logs from the database
 		String getLogs() {
-//			System.out.println("tada2");
-//			GetRequest getRequest = new GetRequest("logs","doc","AX4EtVHB9s7EpicKFTev");
-//			try {
-//				System.out.println("tada3");
-//				GetResponse getResponse = client.get(getRequest);
-//				if(getResponse.isExists()) {
-//					System.out.println("tada4");
-//					String sourceAsString = getResponse.getSourceAsString();
-//					Map<String, Object> sourceAsMap = getResponse.getSourceAsMap();
-//					
-//					System.out.println(sourceAsString);
-//				} else {
-//					System.out.println("nopeeee, this ain't working");
-//				}
-//			} catch (IOException e) {
-//				System.out.println("Error while getting logs from ES");
-//				e.printStackTrace();
-//			}
-//			
-			
+
 			String eSResponse = "";
 			
 			SearchRequest searchRequest = new SearchRequest("logs");
@@ -278,10 +210,7 @@ public class ES_DAO {
 					
 					SearchHit hit = searchHits[i];
 					String sourceAsString = hit.getSourceAsString();
-					
-//					System.out.println(sourceAsString);
 					Map<String, Object> sourceAsMap = hit.getSourceAsMap();	
-//					System.out.println(sourceAsMap);
 					
 					if(eSResponse.length()<=1) {
 						eSResponse += "["+ sourceAsString;

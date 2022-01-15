@@ -13,6 +13,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/*
+ * Traverses the log file in the given location and shows the first 10 lines to the user
+ * to make the custom pattern
+ * */
 
 @WebServlet("/traverser")
 public class Traverser extends HttpServlet {
@@ -20,8 +24,7 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 		
 		
 		String HLLseparator = req.getParameter("separator");
-//		if(separator.equals("l"))
-//			separator = "|";
+
 		String separator;
 		if(HLLseparator.equals("pipeline"))	separator = "\\|";
 		else if(HLLseparator.equals("comma")) separator = ",";
@@ -38,16 +41,6 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 		String filePath = req.getParameter("fileName");
 		String eSResponse = null;
 		
-//		separator = " ";
-		
-		
-//		String filePath = "C:\\Users\\mani-pt4556\\Downloads\\DhcpSrvLog-Mon.log.txt";
-//		String filePath = "D:\\dummy.txt";
-//		String filePath = "D:\\space.txt";
-		
-		
-//		filePath = "D:\\space.txt";
-//		separator = " ";
 		
 		try {					
 			FileInputStream fis = new FileInputStream(filePath);
@@ -58,12 +51,7 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 			String thisLine; 
 			String headers = "{";
 	  		
-//			for(int j=0;j<currentLine.length;j++)
-//				System.out.print(currentLine[j]+"::");
-//			System.out.println();
-						
-		    //reading lines from .csv files
-			
+
 			eSResponse = "[";
 			String row1[];
 			boolean start = true;
@@ -74,21 +62,11 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 				
 				row1 = thisLine.split(separator);
 
-					
-//				for(int i=0;i<row1.length;i++)
-//					System.out.print(row1[i]+"::");
-				
-//				es.insertRow(row1, currentLine, thisLine);
-				
-//				System.out.println();
 				if(separator!="\\|") {
-//					es.insertRow(row1, currentLine, thisLine);
-					if(!start) eSResponse += ", ";
-					
-//					Pattern pattern = Pattern.compile("^.*msg=User.*$");
-					eSResponse += "{ \"data\":\"";
-//					Matcher m = pattern.matcher(thisLine);
 
+					if(!start) eSResponse += ", ";
+
+					eSResponse += "{ \"data\":\"";
 					for(int i=0;i<row1.length;i++) {
 						eSResponse += row1[i] + ",";
 						
@@ -97,19 +75,12 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 					start = false;
 				}
 				else {
-//					es.insertRow(row1, thisLine);
 					
 					if(!start) eSResponse += ", ";
-					
-					Pattern pattern = Pattern.compile("^.*msg=User.*$");
+							
 					eSResponse += "{ \"data\":\"";
-					Matcher m = pattern.matcher(thisLine);
-					if(m.matches()) {
-						System.out.println("match found");
-					}
 					for(int i=0;i<row1.length;i++) {
-						eSResponse += row1[i] + ",";
-						
+						eSResponse += row1[i] + ",";	
 					}
 					eSResponse += "\"}";				
 					start = false;
@@ -122,13 +93,6 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 		} catch (Exception ex) {
 			System.out.println("Error while traversing csv in the server side: " + ex);
 		}
-		
-//		System.out.println("tada1");
-//		if(separator!="\\|")
-//			eSResponse = es.getLogs();
-//		System.out.println("tada5");
-		
-//		System.out.println(eSResponse);
 		out.println(eSResponse);
 		
 	}

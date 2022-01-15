@@ -15,33 +15,32 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
+/*
+ * This generates the regex pattern from the user's input, this is for showing the regex 
+ * everytime the user request(doesn't upload the regex in the database)
+ * */
+
 @WebServlet("/generatePattern")
 public class generatePattern extends HttpServlet{
 	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-//		String regex = "@v {manick}55";
-//		Xeger generator = new Xeger(regex);
-//		String result = generator.generate();
-		
+	
 		String ruleJSON = null, fieldJSONstring = null;
+		String ruleName, fieldName, value, prefix, suffix, fieldArrayString, regex = "^.*(";
+		
+		
 		ruleJSON = req.getParameter("ruleJSON");
 		fieldJSONstring = req.getParameter("fieldJSONstring");
-//		ruleJSON = "{\"ruleName\": \"rule1\", \"fields\": [ {\"fieldName\": \"as\",\"value\": \"ould\",\"prefix\": \"fd\",\"suffix\": \"gf\"}, {\"fieldName\": \"WQ\",\"value\": \"herelog\",\"prefix\": \"EF\",\"suffix\": \"FE\"}]}";
 		System.out.println(ruleJSON);
 		
 		JSONObject obj = new JSONObject(ruleJSON);
-		System.out.println(obj);
 		
 		
-		String ruleName, fieldName, value, prefix, suffix, fieldArrayString, regex = "^.*(";
-//		
+		
+	
 		ruleName = obj.getString("ruleName");
 		System.out.println(ruleName);
 		JSONArray arr = obj.getJSONArray("fields");
-//		fieldArrayString = obj.getString("fields");
-//		System.out.println("++");
-//		System.out.println(fieldArrayString);
-//		System.out.println("++");
-//		
+	
 		for(int i=0;i<arr.length();i++) {
 			fieldName = arr.getJSONObject(i).getString("fieldName");
 			value = arr.getJSONObject(i).getString("value");
@@ -53,7 +52,6 @@ public class generatePattern extends HttpServlet{
 		}
 		regex += ").*$";
 		System.out.println(regex);
-//		
 		
 		
 		HashMap<String, String> map = new HashMap<>();

@@ -1,0 +1,100 @@
+<button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal0"
+            onclick="document.getElementById('modalLog').innerHTML='log should be herelog should be herelog should be herelog should be herelog should be herelog should be herelog should be herelog should be herelog should be herelog should be herelog should be herelog should be here'">
+            <i class="fa fa-clone"></i>
+        </button>
+
+<!-- Modal -->
+        <div class="modal fade" id="exampleModal0" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Feature extracter</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            Rule name:
+                            <input type="text" id="ruleName">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <b>Log:</b>
+                                        <p id="modalLog"></p>
+                                    </div>
+                                    <div class="col-6">
+                                        <b>Fields:</b>
+                                        <input type="text" id="selectedText" placeholder="selected" class="d-none">
+
+                                        <button type="button" class="btn" data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="Manage prefix-suffix">
+                                            <div class="dropdown">
+                                                <a class="btn dropdown-toggle" href="#" role="button"
+                                                    id="dropdownMenuLink" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="fa fa-tasks"></i>
+                                                </a>
+
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                    <li><a class="dropdown-item" href="#"><input
+                                                                class="form-check-input" type="checkbox"
+                                                                id="modalPrefix">
+                                                            <label class="form-check-label" for="flexCheckDefault">
+                                                                Field value prefix
+                                                            </label></a></li>
+                                                    <li><a class="dropdown-item" href="#"><input
+                                                                class="form-check-input" type="checkbox"
+                                                                id="modalSuffix">
+                                                            <label class="form-check-label" for="flexCheckDefault">
+                                                                Field value suffix
+                                                            </label></a></li>
+                                                    <li><a class="dropdown-item" href="#"><button type="button"
+                                                                class="btn btn-outline-secondary" id="modalApplyButton"
+                                                                {{on 'click'
+                                                                this.applyChangesToModalTable}}>Apply</button></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" {{on 'click'
+                                            this.generatePattern}}>Generate pattern</button>
+                                        <br>
+
+
+
+
+                                        <table id="modalFieldTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Field name</th>
+                                                    <th>Field value</th>
+                                                    <th class="d-none" id="modalPrefixColumn">Prefix</th>
+                                                    <th class="d-none" id="modalSuffixColumn">Suffix</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlTextarea1">Generated regex:</label>
+                                        <textarea class="form-control" id="generatedPatternTextArea"
+                                            rows="2"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" {{on 'click' this.addPattern}}>Create
+                            rule</button>
+                    </div>
+                </div>
+            </div>
+        </div>

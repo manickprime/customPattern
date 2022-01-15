@@ -15,6 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 
 
+/*
+ * for finding the separator in the log file(works only if the first line in the log constains the 
+ * attributes along with the separator
+ * */
+
 @WebServlet("/find")
 public class FindMostOccuring extends HttpServlet {
 
@@ -23,9 +28,7 @@ public class FindMostOccuring extends HttpServlet {
     		String filePath = req.getParameter("fileName");
     		int comma = 0, pipeline = 0, space = 0;
     		
-    		String suggestedSeperator = " ";
-//    		filePath = "D:\\space.txt";
-    		
+    		String suggestedSeperator = " ";		
     		System.out.println(filePath);
     		
     		try {					
@@ -41,19 +44,13 @@ public class FindMostOccuring extends HttpServlet {
     				else {}
     			}
     			
-//    			(space > pipeline) ? (space > comma)  ? suggestedSeperator = " " : (pipeline > comma) ? suggestedSeperator = "|" : suggestedSeperator = "," ;
-
     			System.out.println();
     			System.out.println(comma + " " + pipeline + " " + space);
     			
     			if(space > pipeline && space > comma) suggestedSeperator = "space";
     			else if (pipeline > comma) suggestedSeperator = "pipeline";
     			else suggestedSeperator="comma";
-    			
-    			
-    			
-    			
-    			
+
     			System.out.println("The suggested separator is: " + suggestedSeperator);
     				
     			myInput.close();
@@ -70,7 +67,6 @@ public class FindMostOccuring extends HttpServlet {
     		
     		
     		PrintWriter out = res.getWriter();
-//    		out.println(suggestedSeperator);
     		out.println(jSONResult);
 
 	}

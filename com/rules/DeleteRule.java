@@ -9,6 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.manick.database_DAO;
 
+
+/*
+ * deletes the record of the rule in the sql database
+ * */
+
 @WebServlet("/deleteRule")
 public class DeleteRule extends HttpServlet {
 	
@@ -17,15 +22,11 @@ public class DeleteRule extends HttpServlet {
 		String ruleName = req.getParameter("ruleName");
 		
 		database_DAO db = new database_DAO();
-		db.connect();
 		
-		
+		db.connect();		
 		db.deleteThisRule(ruleName);
 		db.closeConnection();
-		
-		
-		
-		
+	
 	}
 
 }

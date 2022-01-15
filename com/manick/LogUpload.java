@@ -14,6 +14,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/*
+ * Applies the regex in the log, if the log matches the logs, it would be inserted in the ES and 
+ * the uploaded logs would be shown in the website 
+ * */
+
 @WebServlet("/upload")
 public class LogUpload extends HttpServlet{
 	
@@ -28,9 +33,7 @@ public class LogUpload extends HttpServlet{
 		
 		String regex[] = db.getIncludedRules();
 		db.closeConnection();
-//		String regex[] = req.getParameterValues("regexArray");
-//		if(separator.equals("l"))
-//			separator = "|";
+
 		String separator;
 		if(HLLseparator.equals("pipeline"))	separator = "\\|";
 		else if(HLLseparator.equals("comma")) separator = ",";
@@ -62,31 +65,30 @@ public class LogUpload extends HttpServlet{
 			String currentLine[] = CSVheader.split(separator);
 			String thisLine; 
 			String headers = "{";
-	  		
-//			for(int j=0;j<currentLine.length;j++)
-//				System.out.print(currentLine[j]+"::");
-//			System.out.println();
-						
-		    //reading lines from .csv files
 			
 			eSResponse = "[";
 			String row1[];
 			boolean start = true;
 			while ((thisLine = myInput.readLine()) != null){
-				row1 = thisLine.split(separator);
-//				Pattern ptrn = Pattern.compile(regex[0]);
-//				Matcher m = ptrn.matcher(thisLine);
-//				if(m.matches()) {
-//					System.out.println(thisLine);
-//					System.out.println("=================");
-//				} else {
-//					
-//				}
-				
-				if(Pattern.matches( regex[0] , thisLine)) {
+				row1 = thisLine.split(separator);	
+				boolean matching = true;
+				for(int i=0;i<regex.length;i++) {
+					matching &= Pattern.matches( regex[i], thisLine);
+				}
+				if(matching) {
 					System.out.println(thisLine);
 					System.out.println("=================");
-					if(separator!="\\|") {}
+					if(separator!="\\|") {
+//						es.insertRow(row1, thisLine);
+						//while inserting the logs, insert as attributeName: value, so use the other es.insertRow
+						if(!start) eSResponse += ", ";
+						eSResponse += "{ \"data\":\"";
+						for(int i=0;i<row1.length;i++) {
+							eSResponse += row1[i] + ",";
+						}
+						eSResponse += "\"}";
+						start = false;
+					}
 					else {
 						es.insertRow(row1, thisLine);
 						if(!start) eSResponse += ", ";
@@ -99,56 +101,6 @@ public class LogUpload extends HttpServlet{
 						
 					}
 				}
-
-				
-				/*
-				
-				es.insertRow(row1, currentLine, thisLine);
-				
-				System.out.println();
-				if(separator!="\\|") {}
-					es.insertRow(row1, currentLine, thisLine);
-				else {
-					es.insertRow(row1, thisLine);
-					
-					if(!start) eSResponse += ", ";
-					String prefix = "dmac=", suffix = "", field = "00:";
-					String p = Pattern.quote(prefix + field + suffix);
-					p = ".*" + p + ".*";
-					Pattern pattern = Pattern.compile(p);
-					
-					System.out.println(thisLine);
-					
-					System.out.println(p);
-					Matcher m = pattern.matcher(thisLine);
-					System.out.println(m.matches());
-					Pattern pattern = Pattern.compile("^.*msg=User.*$");
-					eSResponse += "{ \"data\":\"";
-					Matcher m = pattern.matcher(thisLine);
-					if(m.matches()) {
-						System.out.println(thisLine);
-						
-						if(!start) eSResponse += ", ";
-						System.out.println("match found");
-						eSResponse += "{ \"data\":\"";
-						for(int i=0;i<row1.length;i++) {
-							eSResponse += row1[i] + ",";
-							
-						}
-						
-						eSResponse += "\"}";
-						start = false;
-						
-					}
-					for(int i=0;i<row1.length;i++) {
-						eSResponse += row1[i] + ",";
-						
-					}
-					
-					eSResponse += "\"}";				
-					start = false;
-				}
-				*/
 				
 			}	
 				
@@ -158,15 +110,6 @@ public class LogUpload extends HttpServlet{
 		} catch (Exception ex) {
 			System.out.println("Error while traversing csv in the server side: " + ex);
 		}
-		/*
-		System.out.println("tada1");
-		if(separator!="\\|")
-			eSResponse = es.getLogs();
-		System.out.println("tada5");
-		
-		System.out.println(eSResponse);
-		out.println(eSResponse);
-		*/
 		
 		out.println(eSResponse);
 	}

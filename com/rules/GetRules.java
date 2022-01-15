@@ -14,16 +14,18 @@ import com.google.gson.Gson;
 import com.manick.ES_DAO;
 import com.manick.database_DAO;
 
+/*
+ * Retrieves all the rules and it's status from the database and returns as JSON
+ * */
+
 @WebServlet("/getRules")
 public class GetRules extends HttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		database_DAO db = new database_DAO();
 		db.connect();
 		
-//		String currentConstraints[] = db.getRulesName();
 		HashMap<String, Integer> rules = db.getRuleNameAndStatus();
 		
-//		String resultString = new Gson().toJson(currentConstraints);
 		String resultString = new Gson().toJson(rules);
 		
 		System.out.println(resultString);

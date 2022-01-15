@@ -12,18 +12,19 @@ import org.json.JSONObject;
 
 
 
+/*
+creates a basic regex from the suffix, prefix and the value, and this stores the generated regex 
+in the database 
+*/
+
 @WebServlet("/addPattern")
 public class AddPattern extends HttpServlet {
        
 	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-//		String regex = "@v {manick}55";
-//		Xeger generator = new Xeger(regex);
-//		String result = generator.generate();
 		
 		String ruleJSON = null, fieldJSONstring = null;
 		ruleJSON = req.getParameter("ruleJSON");
 		fieldJSONstring = req.getParameter("fieldJSONstring");
-//		ruleJSON = "{\"ruleName\": \"rule1\", \"fields\": [ {\"fieldName\": \"as\",\"value\": \"ould\",\"prefix\": \"fd\",\"suffix\": \"gf\"}, {\"fieldName\": \"WQ\",\"value\": \"herelog\",\"prefix\": \"EF\",\"suffix\": \"FE\"}]}";
 		System.out.println(ruleJSON);
 		
 		JSONObject obj = new JSONObject(ruleJSON);
@@ -31,15 +32,11 @@ public class AddPattern extends HttpServlet {
 		
 		
 		String ruleName, fieldName, value, prefix, suffix, fieldArrayString, regex = "^.*(";
-//		
+		
 		ruleName = obj.getString("ruleName");
 		System.out.println(ruleName);
 		JSONArray arr = obj.getJSONArray("fields");
-//		fieldArrayString = obj.getString("fields");
-//		System.out.println("++");
-//		System.out.println(fieldArrayString);
-//		System.out.println("++");
-//		
+	
 		for(int i=0;i<arr.length();i++) {
 			fieldName = arr.getJSONObject(i).getString("fieldName");
 			value = arr.getJSONObject(i).getString("value");
@@ -51,7 +48,7 @@ public class AddPattern extends HttpServlet {
 		}
 		regex += ").*$";
 		System.out.println(regex);
-//		
+
 		
 		System.out.println(fieldJSONstring);
 		database_DAO db = new database_DAO();
@@ -59,21 +56,7 @@ public class AddPattern extends HttpServlet {
 		db.insertConstraint(ruleName, fieldJSONstring, regex);
 		db.closeConnection();
 		
-		
-//		String prefix = "", suffix = "request", field = "hostname";
-//		String p = Pattern.quote(prefix + " " + field + " " + suffix);
-//		Pattern pattern = Pattern.compile(p);
-//		
-//		Matcher m = pattern.matcher("dvchost=hostname request");
-//		System.out.println(m.matches());
-//		
-//		System.out.println(p);
-//		Pattern p = Pattern.compile("{manick}}55");
-//		Matcher m = p.matcher()
-		
-//		System.out.println("Generated regex:");
-//		System.out.println(result);
-//		System.out.println(generator);
+
 	}
 
 }
