@@ -1,10 +1,10 @@
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <p id="searchNavID" class="nav-link active" aria-current="page" {{on 'click' this.changeToConstraint}}>
+        <p id="searchNavID" class="nav-link active" aria-current="page" {{on 'click' this.changeToSearch}}>
             Search</p>
     </li>
     <li class="nav-item">
-        <p id="ruleNavID" class="nav-link" aria-current="page" {{on 'click' this.changeToReport}}>Rules</p>
+        <p id="ruleNavID" class="nav-link" aria-current="page" {{on 'click' this.changeToRules}}>Rules</p>
     </li>
 </ul>
 
@@ -32,10 +32,26 @@
 
         <br>
 
-        <Modal/>
+        <Modal/> <br>
 
-        <h4>Traversed logs:</h4>
+        <select name="logsPerPage" id="logsPerPage-customGrouping" {{on 'change' this.changeNoOfLogs}}>
+				<option value="5" selected>5</option>
+				<option value="5">10</option>
+				<option value="5">25</option>
+				<option value="5">50</option>
+				<option value="5">100</option>
+			</select>
+
+        <button type="button" class="btn" {{on 'click' this.prevPageCustomGrouping}} id="prevBtn">
+            <i class="fa fa-angle-left"></i>
+        </button>
+        <p style="display:inline" id="logsCountTable"></p>
+        <button type="button" class="btn" {{on 'click' this.nextPageCustomGrouping}} id="nextBtn">
+            <i class="fa fa-angle-right"></i>
+        </button>
+        
         <table id="matchedLogs" class="table table-hover"></table>
+
 
     </div>
 </div>

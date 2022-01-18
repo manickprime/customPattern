@@ -105,6 +105,10 @@ public class LogUpload extends HttpServlet{
 			}	
 				
 			eSResponse += "]";
+//			System.out.println(eSResponse);
+			
+			
+			eSResponse = es.getLogs();
 			System.out.println(eSResponse);
 			myInput.close();			
 		} catch (Exception ex) {

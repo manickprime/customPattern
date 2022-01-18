@@ -99,8 +99,8 @@ public class database_DAO {
 					
 						String ruleName = rs.getString("ruleName");
 						int flag = rs.getInt("flag");
-						System.out.println(ruleName);
-						System.out.println(flag);
+//						System.out.println(ruleName);
+//						System.out.println(flag);
 						rules.put(ruleName, flag);
 					
 					}

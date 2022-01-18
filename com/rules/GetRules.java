@@ -28,7 +28,7 @@ public class GetRules extends HttpServlet{
 		
 		String resultString = new Gson().toJson(rules);
 		
-		System.out.println(resultString);
+//		System.out.println(resultString);
 		
 		db.closeConnection();
 		

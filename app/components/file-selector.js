@@ -4,11 +4,13 @@ import { action } from '@ember/object';
 import { doc } from 'prettier';
 
 var name = 'manick';
-$('#rules').hide();
+var jsonLogs = [];
+var pageNum = 0;
 
-$(document).on('ready', function () {
-  $('#rules').hide();
-});
+
+console.log("im ready imready imready imready");
+
+
 
 //shows the list of rules from the database
 function getRules() {
@@ -49,7 +51,7 @@ function getRules() {
         trHTML += item;
         trHTML += '</td>';
 
-        
+
 
         trHTML +=
           '<td><button type="button" class="btn btn-outline-secondary editButton" data-bs-toggle="modal" data-bs-target="#editModal" id="edit' +
@@ -99,7 +101,7 @@ $(document).on('click', '.editButton', function () {
   console.log('new way!');
   var ruleName = (this.id).substr(4);
   $('#editRuleText').text(ruleName);
-  
+
   $.ajax({
     type: 'POST',
     data: { ruleName: ruleName },
@@ -129,21 +131,203 @@ $(document).on('click', '.deleteButton', function () {
   });
 });
 
+
+// function changeNoOfLogs() {
+//   console.log("tak tak");
+//   var logCount = $('#logsPerPage-customGrouping :selected').text();
+//   console.log(logCount);
+// }
+
+
 $(function () {
   $('.crossBtn').on('click', function () {
     console.log('this should work');
   });
 });
 
+
+
+
 export default class ScientistsComponent extends Component {
   @action
-  previewLog() {}
+  previewLog() { }
+
 
   @action
-  changeToConstraint() {
+  nextPageCustomGrouping() {
+
+    pageNum += 1;
+    var endNum, startNum, trHTML = '';
+
+    
+
+
+    // size = $('#logsPerPage-customGrouping option:selected').text();
+    var logCount = parseInt($('#logsPerPage-customGrouping :selected').text(), 10);
+
+    console.log("im the size: " + logCount);
+    console.log("im the page: " + pageNum);
+
+
+    startNum = logCount * pageNum;
+    endNum = startNum + logCount;
+
+    // $('#nextBtn').show();
+
+    // if(startNum >json.length){
+    //   $('#nextBtn').hide();
+    // }
+
+    console.log(startNum + " " + endNum);
+    $('#logsCountTable').text(startNum+"/"+jsonLogs.length);
+
+
+
+    // if(endNum > totalNoOfHitsCustomGrouping){
+    //     endNum = totalNoOfHitsCustomGrouping;
+    //     customGroupNextButton.style.visibility = "hidden";
+    // }
+
+    // $('#customGroupingPageNum').text(startNum + "-" + endNum  + " of " + totalNoOfHitsCustomGrouping);
+
+    if (jsonLogs.length != 0) {
+      console.log(jsonLogs.length);
+      console.log(jsonLogs);
+
+
+      trHTML += '<thead><tr><th>Uploded logs:</th></tr></thead>';
+
+      trHTML += '<tbody>';
+
+      for (var i = startNum; i < endNum; i++) {
+        trHTML += '<tr>';
+        for (var stuff in jsonLogs[i]) {
+          trHTML +=
+            '<td>' +
+            jsonLogs[i][stuff] +
+            '<button type="button" class="btn hoverButton" data-bs-toggle="modal" data-bs-target="#exampleModal0" onclick="document.getElementById(\'modalLog\').innerHTML = \'' +
+            jsonLogs[i][stuff] +
+            '\'"><i class="fa fa-clone"></i></button></td>';
+        }
+
+        trHTML += '</tr>';
+      }
+      trHTML += '</tbody>';
+      console.log(trHTML);
+      $('#matchedLogs').empty();
+      $('#matchedLogs').append(trHTML);
+    }
+  }
+
+
+  @action
+  prevPageCustomGrouping() {
+
+    // $('#prevBtn').show();
+    pageNum-=1;
+    // if(pageNum-1 ==0){
+      
+    //   $('#prevBtn').hide();
+    // }
+
+    
+    var endNum, startNum, trHTML = '';
+
+
+    // size = $('#logsPerPage-customGrouping option:selected').text();
+    var logCount = parseInt($('#logsPerPage-customGrouping :selected').text(), 10);
+
+    console.log("im the size: " + logCount);
+    console.log("im the page: " + pageNum);
+
+
+    startNum = logCount * pageNum;
+    endNum = startNum + logCount;
+
+    console.log(startNum + " " + endNum);
+    $('#logsCountTable').text(startNum+"/"+jsonLogs.length);
+
+
+
+    // if(endNum > totalNoOfHitsCustomGrouping){
+    //     endNum = totalNoOfHitsCustomGrouping;
+    //     customGroupNextButton.style.visibility = "hidden";
+    // }
+
+    // $('#customGroupingPageNum').text(startNum + "-" + endNum  + " of " + totalNoOfHitsCustomGrouping);
+
+    if (jsonLogs.length != 0) {
+      console.log(jsonLogs.length);
+      console.log(jsonLogs);
+
+
+      trHTML += '<thead><tr><th>Uploded logs:</th></tr></thead>';
+
+      trHTML += '<tbody>';
+
+      for (var i = startNum; i < endNum; i++) {
+        trHTML += '<tr>';
+        for (var stuff in jsonLogs[i]) {
+          trHTML +=
+            '<td>' +
+            jsonLogs[i][stuff] +
+            '<button type="button" class="btn hoverButton" data-bs-toggle="modal" data-bs-target="#exampleModal0" onclick="document.getElementById(\'modalLog\').innerHTML = \'' +
+            jsonLogs[i][stuff] +
+            '\'"><i class="fa fa-clone"></i></button></td>';
+        }
+
+        trHTML += '</tr>';
+      }
+      trHTML += '</tbody>';
+      console.log(trHTML);
+      $('#matchedLogs').empty();
+      $('#matchedLogs').append(trHTML);
+    }
+  }
+
+  @action
+  changeNoOfLogs() {
+
+    var logCount = $('#logsPerPage-customGrouping :selected').text();
+    console.log(logCount);
+    console.log("tak tak " + logCount);
+
+    var trHTML = '';
+    if (jsonLogs.length != 0) {
+      console.log(jsonLogs.length);
+      console.log(jsonLogs);
+
+
+      trHTML += '<thead><tr><th>Uploded logs:</th></tr></thead>';
+
+      trHTML += '<tbody>';
+
+      for (var i = 0; i < logCount; i++) {
+        trHTML += '<tr>';
+        for (var stuff in jsonLogs[i]) {
+          trHTML +=
+            '<td>' +
+            jsonLogs[i][stuff] +
+            '<button type="button" class="btn hoverButton" data-bs-toggle="modal" data-bs-target="#exampleModal0" onclick="document.getElementById(\'modalLog\').innerHTML = \'' +
+            jsonLogs[i][stuff] +
+            '\'"><i class="fa fa-clone"></i></button></td>';
+        }
+
+        trHTML += '</tr>';
+      }
+      trHTML += '</tbody>';
+      console.log(trHTML);
+      $('#matchedLogs').empty();
+      $('#matchedLogs').append(trHTML);
+    }
+  }
+
+  @action
+  changeToSearch() {
     //used to toggle to the constraint screen
     $('#search').show();
     $('#rules').hide();
+    $('#logsPerPage-customGrouping').hide();
     var element = document.getElementById('searchNavID');
     element.classList.add('active');
     element = document.getElementById('ruleNavID');
@@ -151,7 +335,7 @@ export default class ScientistsComponent extends Component {
   }
 
   @action
-  changeToReport() {
+  changeToRules() {
     //used to toggle to report screen
     $('#search').hide();
     $('#rules').show();
@@ -281,11 +465,13 @@ export default class ScientistsComponent extends Component {
 
           console.log('this should print icky');
 
-          trHTML += '<thead><tr><th>Complete log</th></tr></thead>';
+          trHTML += '<thead><tr><th>Traversed logs:</th></tr></thead>';
 
           trHTML += '<tbody>';
 
+
           for (var i = 0; i < json.length; i++) {
+
             trHTML += '<tr>';
             for (var stuff in json[i]) {
               trHTML +=
@@ -327,27 +513,34 @@ export default class ScientistsComponent extends Component {
       success: function (result) {
         console.log(result);
 
-        var json = JSON.parse(result);
-        console.log(json);
+        $('#logsPerPage-customGrouping').show();
+
+        
+
+        jsonLogs = JSON.parse(result);
+        console.log(jsonLogs);
         var trHTML = '';
-        if (json.length != 0) {
-          console.log(json.length);
-          console.log(json);
+        if (jsonLogs.length != 0) {
+          console.log(jsonLogs.length);
+          console.log(jsonLogs);
+
+          var logCount = parseInt($('#logsPerPage-customGrouping :selected').text(), 10);
+          $('#logsCountTable').text(logCount+"/"+jsonLogs.length);
 
           console.log('this should print icky');
 
-          trHTML += '<thead><tr><th>Complete log</th></tr></thead>';
+          trHTML += '<thead><tr><th>Uploded logs:</th></tr></thead>';
 
           trHTML += '<tbody>';
 
-          for (var i = 0; i < json.length; i++) {
+          for (var i = 0; i < logCount; i++) {
             trHTML += '<tr>';
-            for (var stuff in json[i]) {
+            for (var stuff in jsonLogs[i]) {
               trHTML +=
                 '<td>' +
-                json[i][stuff] +
+                jsonLogs[i][stuff] +
                 '<button type="button" class="btn hoverButton" data-bs-toggle="modal" data-bs-target="#exampleModal0" onclick="document.getElementById(\'modalLog\').innerHTML = \'' +
-                json[i][stuff] +
+                jsonLogs[i][stuff] +
                 '\'"><i class="fa fa-clone"></i></button></td>';
             }
 
