@@ -13,6 +13,7 @@ import java.util.Properties;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -22,6 +23,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.replication.ReplicationResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -231,6 +233,22 @@ public class ES_DAO {
 			return eSResponse;
 		}
 		
+		//deletes all the documents in an index
+//		public void deleteDocuments() {
+//			
+//			DeleteByQueryRequest request =
+//			        new DeleteByQueryRequest("logs","");
+//			request.setConflicts("proceed");
+////			request.setQuery(null);
+//
+//			try {
+//				client.deleteByQuery(request, RequestOptions.DEFAULT);
+//			} catch (Exception e) {
+//				System.out.println("Error while deleting documents in elasticsearch: " + e.toString());
+//				e.printStackTrace();
+//			}
+//			
+//		}
 		
 	
 }

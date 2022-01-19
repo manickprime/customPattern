@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.elasticsearch.common.lucene.search.XMoreLikeThis;
+
 /*
  * Traverses the log file in the given location and shows the first 10 lines to the user
  * to make the custom pattern
@@ -45,8 +47,37 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 		try {					
 			FileInputStream fis = new FileInputStream(filePath);
 			DataInputStream myInput = new DataInputStream(fis);	
+			
+			String CSVheader = null;
+			
+			if(separator=="," || separator==" ") {
+				for(int i=0;i<10;i++) {
+					Pattern pattern;
+					CSVheader = myInput.readLine();
+					if(separator==",")
+						pattern = Pattern.compile(",*[a-zA-Z0-9]*,");
+					else
+						pattern = Pattern.compile(" *[a-zA-Z0-9]* ");
+					
+					
+					Matcher matcher = pattern.matcher(CSVheader);
+					int count = 0;
+					while(matcher.find()) {
+						count++;
+					}
+					
+					System.out.println(CSVheader);
+					System.out.println(count);
+					
+					if(count>5) {
+						break;
+					}
+				}
+			} else {
+				CSVheader = myInput.readLine();
+			}
 							
-			String CSVheader = myInput.readLine();
+			 
 			String currentLine[] = CSVheader.split(separator);
 			String thisLine; 
 			String headers = "{";
@@ -60,31 +91,37 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 				linesTraversed++;
 				if(linesTraversed >= 10) break;
 				
-				row1 = thisLine.split(separator);
+				
+				System.out.println(thisLine);
+				System.out.println(thisLine.length());
+				
+				
+					row1 = thisLine.split(separator);
 
-				if(separator!="\\|") {
+					if(separator!="\\|") {
 
-					if(!start) eSResponse += ", ";
+						if(!start) eSResponse += ", ";
 
-					eSResponse += "{ \"data\":\"";
-					for(int i=0;i<row1.length;i++) {
-						eSResponse += row1[i] + ",";
+						eSResponse += "{ \"data\":\"";
+						for(int i=0;i<row1.length;i++) {
+							eSResponse += row1[i] + ",";
 						
+						}
+						eSResponse += "\"}";				
+						start = false;
 					}
-					eSResponse += "\"}";				
-					start = false;
-				}
-				else {
+					else {
 					
-					if(!start) eSResponse += ", ";
+						if(!start) eSResponse += ", ";
 							
-					eSResponse += "{ \"data\":\"";
-					for(int i=0;i<row1.length;i++) {
-						eSResponse += row1[i] + ",";	
+						eSResponse += "{ \"data\":\"";
+						for(int i=0;i<row1.length;i++) {
+							eSResponse += row1[i] + ",";	
+						}
+						eSResponse += "\"}";				
+						start = false;
 					}
-					eSResponse += "\"}";				
-					start = false;
-				}
+				
 				
 			}	
 				

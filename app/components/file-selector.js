@@ -486,6 +486,7 @@ export default class ScientistsComponent extends Component {
           }
           trHTML += '</tbody>';
           console.log(trHTML);
+          $('#matchedLogs').empty();
           $('#matchedLogs').append(trHTML);
         }
       },

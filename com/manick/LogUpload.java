@@ -45,7 +45,7 @@ public class LogUpload extends HttpServlet{
 
 		ES_DAO es = new ES_DAO();
 		es.connect();
-		
+//		es.deleteDocuments();		
 
 		String filePath = req.getParameter("fileName");
 		String eSResponse = null;
@@ -61,7 +61,37 @@ public class LogUpload extends HttpServlet{
 			FileInputStream fis = new FileInputStream(filePath);
 			DataInputStream myInput = new DataInputStream(fis);	
 							
-			String CSVheader = myInput.readLine();
+			String CSVheader = null;
+			
+			if(separator=="," || separator==" ") {
+				for(int i=0;i<10;i++) {
+					Pattern pattern;
+					CSVheader = myInput.readLine();
+					if(separator==",")
+						pattern = Pattern.compile(",*[a-zA-Z0-9]*,");
+					else
+						pattern = Pattern.compile(" *[a-zA-Z0-9]* ");
+					
+					
+					Matcher matcher = pattern.matcher(CSVheader);
+					int count = 0;
+					while(matcher.find()) {
+						count++;
+					}
+					
+					System.out.println(CSVheader);
+					System.out.println(count);
+					
+					if(count>5) {
+						break;
+					}
+				}
+			} else {
+				CSVheader = myInput.readLine();
+			}
+							
+			 
+		
 			String currentLine[] = CSVheader.split(separator);
 			String thisLine; 
 			String headers = "{";
@@ -79,7 +109,7 @@ public class LogUpload extends HttpServlet{
 					System.out.println(thisLine);
 					System.out.println("=================");
 					if(separator!="\\|") {
-//						es.insertRow(row1, thisLine);
+						es.insertRow(row1, thisLine);
 						//while inserting the logs, insert as attributeName: value, so use the other es.insertRow
 						if(!start) eSResponse += ", ";
 						eSResponse += "{ \"data\":\"";
