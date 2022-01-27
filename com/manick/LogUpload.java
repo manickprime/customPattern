@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +41,7 @@ public class LogUpload extends HttpServlet{
 		else if(HLLseparator.equals("comma")) separator = ",";
 		else separator = " ";
 		
-		System.out.println("Separator is: " + separator);
+//		System.out.println("Separator is: " + separator);
 		
 		PrintWriter out = res.getWriter();
 
@@ -52,9 +54,9 @@ public class LogUpload extends HttpServlet{
 		
 		
 		
-		for(int i=0;i<regex.length;i++) {
-			System.out.println(regex[i]);
-		}
+//		for(int i=0;i<regex.length;i++) {
+//			System.out.println(regex[i]);
+//		}
 
 		
 		try {					
@@ -62,15 +64,16 @@ public class LogUpload extends HttpServlet{
 			DataInputStream myInput = new DataInputStream(fis);	
 							
 			String CSVheader = null;
+			Pattern commaPattern = Pattern.compile(",*[a-zA-Z0-9]*,"), spacePattern = Pattern.compile(" *[a-zA-Z0-9]* ");
 			
 			if(separator=="," || separator==" ") {
 				for(int i=0;i<10;i++) {
 					Pattern pattern;
 					CSVheader = myInput.readLine();
 					if(separator==",")
-						pattern = Pattern.compile(",*[a-zA-Z0-9]*,");
+						pattern = commaPattern;
 					else
-						pattern = Pattern.compile(" *[a-zA-Z0-9]* ");
+						pattern = spacePattern;
 					
 					
 					Matcher matcher = pattern.matcher(CSVheader);
@@ -94,55 +97,48 @@ public class LogUpload extends HttpServlet{
 		
 			String currentLine[] = CSVheader.split(separator);
 			String thisLine; 
+			HashMap<String, String> matchedConstraints = new HashMap<String, String>();
 			String headers = "{";
 			
-			eSResponse = "[";
 			String row1[];
 			boolean start = true;
 			while ((thisLine = myInput.readLine()) != null){
 				row1 = thisLine.split(separator);	
-				boolean matching = true;
+				boolean matching = true, eachMatching;
 				for(int i=0;i<regex.length;i++) {
-					matching &= Pattern.matches( regex[i], thisLine);
+					eachMatching = Pattern.matches( regex[i], thisLine);
+					if(eachMatching) matchedConstraints.put( regex[i] , thisLine);
+					matching &= eachMatching;
 				}
+				
+//				for (Entry<String, String> mapElement : matchedConstraints.entrySet()) {
+//		            String key = (String)mapElement.getKey();
+//		            String value = ((String)mapElement.getValue());
+//		            
+//		            System.out.println(key+":"+value);
+//		            System.out.println("////;lll.......l;l;l;l;l;l;l;l");
+//		        }
+				
 				if(matching) {
-					System.out.println(thisLine);
-					System.out.println("=================");
 					if(separator!="\\|") {
 						es.insertRow(row1, thisLine);
 						//while inserting the logs, insert as attributeName: value, so use the other es.insertRow
-						if(!start) eSResponse += ", ";
-						eSResponse += "{ \"data\":\"";
-						for(int i=0;i<row1.length;i++) {
-							eSResponse += row1[i] + ",";
-						}
-						eSResponse += "\"}";
 						start = false;
 					}
 					else {
 						es.insertRow(row1, thisLine);
-						if(!start) eSResponse += ", ";
-						eSResponse += "{ \"data\":\"";
-						for(int i=0;i<row1.length;i++) {
-							eSResponse += row1[i] + ",";
-						}
-						eSResponse += "\"}";
 						start = false;
-						
 					}
 				}
 				
-			}	
-				
-			eSResponse += "]";
-//			System.out.println(eSResponse);
-			
+			}		
 			
 			eSResponse = es.getLogs();
-			System.out.println(eSResponse);
+//			System.out.println(eSResponse);
+			
 			myInput.close();			
 		} catch (Exception ex) {
-			System.out.println("Error while traversing csv in the server side: " + ex);
+			System.out.println("Error while uploading csv in the server side: " + ex);
 		}
 		
 		out.println(eSResponse);

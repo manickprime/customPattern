@@ -23,6 +23,9 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.replication.ReplicationResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -63,6 +66,16 @@ public class ES_DAO {
 				e.printStackTrace();
 			}
 		}
+	
+		//close the connection with elasticsearch
+//		public void closeConnection() {
+//			try {
+//				connection.close();
+////				((Connection) client).close();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
 	
 		//close the connection with elasticsearch
 //		public void closeConnection() {
@@ -229,6 +242,45 @@ public class ES_DAO {
 			
 			eSResponse += "]";
 			System.out.println(eSResponse);
+			
+			return eSResponse;
+		}
+		
+		public String search(String query) {
+			SearchRequest searchRequest = new SearchRequest("logs");
+			searchRequest.types("doc");
+			
+			
+			QueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("completeLog", query)
+                    .fuzziness(Fuzziness.AUTO)
+                    .prefixLength(3)
+                    .maxExpansions(10);
+			
+			SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+			sourceBuilder.query(matchQueryBuilder);
+			sourceBuilder.from(0);
+			sourceBuilder.size(5);
+			
+			searchRequest.source(sourceBuilder);
+			String eSResponse = "";
+			
+			try {
+				SearchResponse searchResponse = client.search(searchRequest);
+				SearchHits hits = searchResponse.getHits();
+				
+				for(SearchHit hit: hits.getHits()) {
+					String sourceAsString = hit.getSourceAsString();
+					if(eSResponse.length()<=1) {
+						eSResponse += "["+ sourceAsString;
+					} else 
+						eSResponse += "," + sourceAsString;
+				}
+				eSResponse += "]";
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			return eSResponse;
 		}

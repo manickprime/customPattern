@@ -24,7 +24,8 @@ public class GetRules extends HttpServlet{
 		database_DAO db = new database_DAO();
 		db.connect();
 		
-		HashMap<String, Integer> rules = db.getRuleNameAndStatus();
+//		HashMap<String, Integer> rules = db.getRuleNameAndStatus();
+		HashMap<String, Boolean> rules = db.getRuleNameAndStatus();
 		
 		String resultString = new Gson().toJson(rules);
 		

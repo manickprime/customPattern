@@ -1,21 +1,43 @@
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <p id="searchNavID" class="nav-link active" aria-current="page" {{on 'click' this.changeToSearch}}>
-            Search</p>
+        <p id="uploadNavID" class="nav-link active" aria-current="page" {{on 'click' (fn this.changeTabs "upload")}}>Upload</p>
     </li>
     <li class="nav-item">
-        <p id="ruleNavID" class="nav-link" aria-current="page" {{on 'click' this.changeToRules}}>Rules</p>
+        <p id="searchNavID" class="nav-link" aria-current="page" {{on 'click' (fn this.changeTabs "search")}}>Search</p>
+    </li>
+    <li class="nav-item">
+        <p id="ruleNavID" class="nav-link" aria-current="page" {{on 'click' (fn this.changeTabs "rule")}}>Rules</p>
     </li>
 </ul>
 
 <div id="search">
+    <br><br>
+    <div class="input-group flex-nowrap">
+
+        <input type="text" class="form-control" placeholder="search" aria-label="Username"
+            aria-describedby="addon-wrapping" id="searchInput">
+        <span class="input-group-text" id="addon-wrapping" {{on 'click' this.search}}><i class="fa fa-search"
+                aria-hidden="true"></i></span>
+    </div>
+
+    <br>
+    {{#if this.searchNoOfHits}}
+        <p><b>{{this.searchNoOfHits}}</b> hits</p>
+    {{/if}}
+
+
+    {{#each this.searchResults as |row index|}}
+        <p>{{row.completeLog}}</p>
+    {{else}}
+        Sorry, no logs are searched.
+    {{/each}}
+</div>
+
+
+<div id="upload">
     <div id="home">
         <br>
-        <h1>Search</h1>
-        <i class="fa fa-check-square"></i>
-
-        <input type="file" name="file" class="btn btn-light" id="fileName" {{on 'change' this.showSuggestion}} /> 
-        <button type="button" class="btn btn-secondary" {{on 'click' this.previewLog}}>Preview</button>
+        <input type="file" name="file" class="btn btn-light" id="fileName" {{on 'change' this.showSuggestion}} />
         <br>
         <button type="button" class="btn btn-secondary" {{on 'click' this.uploadLogs}}>Upload</button>
         <button type="button" class="btn btn-secondary" {{on 'click' this.showTraverse}}>Traverse</button>
@@ -29,55 +51,87 @@
             <option value="pipeline">|</option>
         </select>
 
-        
-
         <br>
-
-        <Modal/> <br>
+        <Modal /> <br>
 
         <select name="logsPerPage" id="logsPerPage-customGrouping" {{on 'change' this.changeNoOfLogs}}>
-				<option value="5" selected>5</option>
-				<option value="5">10</option>
-				<option value="5">25</option>
-				<option value="5">50</option>
-				<option value="5">100</option>
-			</select>
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
 
-        <button type="button" class="btn" {{on 'click' this.prevPageCustomGrouping}} id="prevBtn">
+        {{!-- <button type="button" class="btn" {{on 'click' this.prevPageCustomGrouping}} id="prevBtn">
+            <i class="fa fa-angle-left"></i>
+        </button> --}}
+        <button type="button" class="btn" {{on 'click' (fn this.changePageCustomGrouping "prev")}} id="prevBtn">
             <i class="fa fa-angle-left"></i>
         </button>
+        
         <p style="display:inline" id="logsCountTable"></p>
-        <button type="button" class="btn" {{on 'click' this.nextPageCustomGrouping}} id="nextBtn">
+        {{!-- <button type="button" class="btn" {{on 'click' this.nextPageCustomGrouping}} id="nextBtn">
+            <i class="fa fa-angle-right"></i>
+        </button> --}}
+        <button type="button" class="btn" {{on 'click' (fn this.changePageCustomGrouping "next")}} id="nextBtn">
             <i class="fa fa-angle-right"></i>
         </button>
-        
-        <table id="matchedLogs" class="table table-hover"></table>
 
 
+        <table id="matchedLogs" class="table table-hover">
+            {{#if this.logs}}
+                <thead><tr><th>{{if this.traversed "Traversed" "Uploaded"}} logs:</th></tr></thead>
+            {{/if}}
+            <tbody>
+            {{#each this.logs as |log|}}
+                <tr>
+                    {{#unless this.traversed}} 
+                        <td>{{log.completeLog}}</td>
+                    {{else}}
+                        <td>{{log.completeLog}}<button type="button" class="btn hoverButton" data-bs-toggle="modal" data-bs-target="#exampleModal0" onclick="document.getElementById('modalLog').innerHTML = {{log.completeLog}}"><i class="fa fa-clone"></i></button></td>
+                    {{/unless}}
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
     </div>
 </div>
 
-<div id="rules">
+<div id="rule">
     <div id="home1">
         <h1>Rules:</h1> <br>
         <button type="button" class="btn btn-secondary" {{on 'click' this.updateStatus}}>Update status</button>
 
-        <br>
-        <p id="ruleNamePreview"></p><p id="regexPreview"></p>
+        <br><br>
+        <p id="ruleNamePreview"></p>
+        <p id="regexPreview"></p>
 
         <br>
-        <EditModal/>
+        <EditModal />
 
         <table id="rulesLists">
             <tr>
                 <th>Status</th>
                 <th>Rules List</th>
             </tr>
-
+            {{#each-in this.rulesList as |rule status|}}
+            <tr>
+                {{#if status}}
+                <td><input class="form-check-input status" type="checkbox" value="" name="ruleStatus"
+                        id="checkbox{{rule}}" checked></td>
+                {{else}}
+                <td><input class="form-check-input status" type="checkbox" value="" name="ruleStatus"
+                        id="checkbox{{rule}}"></td>
+                {{/if}}
+                <td class="ruleList" id={{rule}}>{{rule}}</td>
+                <td><button type="button" class="btn btn-outline-secondary editButton" data-bs-toggle="modal"
+                        data-bs-target="#editModal" id="edit{{rule}}">Edit</button></td>
+                <td><button type="button" class="btn btn-outline-secondary deleteButton"
+                        id="delete{{rule}}">Delete</button></td>
+            </tr>
+            {{else}}
+            Let's create some rules first!
+            {{/each-in}}
         </table>
-
-        <div id="editDiv">
-
-        </div>
     </div>
 </div>

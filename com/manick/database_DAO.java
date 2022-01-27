@@ -85,8 +85,9 @@ public class database_DAO {
 		
 		
 		//to get rules name and flag variable from the database
-		public HashMap<String, Integer> getRuleNameAndStatus() {
-			HashMap<String, Integer> rules = new HashMap<String, Integer>();
+		public HashMap<String, Boolean> getRuleNameAndStatus() {
+//			HashMap<String, Integer> rules = new HashMap<String, Integer>();
+			HashMap<String, Boolean> rules = new HashMap<String, Boolean>();
 			String query = "SELECT ruleName,flag FROM fields";
 			
 			try {
@@ -101,7 +102,11 @@ public class database_DAO {
 						int flag = rs.getInt("flag");
 //						System.out.println(ruleName);
 //						System.out.println(flag);
-						rules.put(ruleName, flag);
+//						rules.put(ruleName, flag);
+						if(flag==0)
+							rules.put(ruleName, false);
+						else
+							rules.put(ruleName, true);
 					
 					}
 		

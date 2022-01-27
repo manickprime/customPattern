@@ -49,15 +49,17 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 			DataInputStream myInput = new DataInputStream(fis);	
 			
 			String CSVheader = null;
+			Pattern commaPattern = Pattern.compile(",*[a-zA-Z0-9]*,"), spacePattern = Pattern.compile(" *[a-zA-Z0-9]* ");
+			
 			
 			if(separator=="," || separator==" ") {
 				for(int i=0;i<10;i++) {
 					Pattern pattern;
 					CSVheader = myInput.readLine();
 					if(separator==",")
-						pattern = Pattern.compile(",*[a-zA-Z0-9]*,");
+						pattern = commaPattern;
 					else
-						pattern = Pattern.compile(" *[a-zA-Z0-9]* ");
+						pattern = spacePattern;
 					
 					
 					Matcher matcher = pattern.matcher(CSVheader);
@@ -90,10 +92,7 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 			while ((thisLine = myInput.readLine()) != null){
 				linesTraversed++;
 				if(linesTraversed >= 10) break;
-				
-				
-				System.out.println(thisLine);
-				System.out.println(thisLine.length());
+
 				
 				
 					row1 = thisLine.split(separator);
@@ -102,7 +101,7 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 
 						if(!start) eSResponse += ", ";
 
-						eSResponse += "{ \"data\":\"";
+						eSResponse += "{ \"completeLog\":\"";
 						for(int i=0;i<row1.length;i++) {
 							eSResponse += row1[i] + ",";
 						
@@ -114,7 +113,7 @@ public void service(HttpServletRequest req, HttpServletResponse res) throws Serv
 					
 						if(!start) eSResponse += ", ";
 							
-						eSResponse += "{ \"data\":\"";
+						eSResponse += "{ \"completeLog\":\"";
 						for(int i=0;i<row1.length;i++) {
 							eSResponse += row1[i] + ",";	
 						}

@@ -6,16 +6,9 @@ var elements = document.getElementsByClassName('hoverButton');
 
 document.addEventListener('mouseup', (event) => {
   if (window.getSelection().toString().length) {
-    console.log(window.getSelection().toString());
     document.getElementById('selectedText').value = window
       .getSelection()
       .toString();
-
-    console.log(elements.length);
-    for (var i = 0; i < elements.length; i++) {
-      console.log('modal');
-      console.log(elements[i].id);
-    }
 
     var trHTML =
       "<tr id='tempFieldId" +
@@ -61,7 +54,6 @@ document.addEventListener('mouseup', (event) => {
 export default class ModalComponent extends Component {
   @action
   generatePattern() {
-    console.log('copperfield is alive');
     var ruleName, fields;
     ruleName = document.getElementById('ruleName').value;
 
@@ -99,13 +91,14 @@ export default class ModalComponent extends Component {
 
     ruleJSON += fieldJSONstring + '}';
 
-    console.log(ruleJSON);
-    console.log(fieldJSONstring);
-
     $.ajax({
       type: 'POST',
-      data: { ruleJSON: ruleJSON, fieldJSONstring: fieldJSONstring },
-      url: 'generatePattern',
+      data: {
+        operation: 'generatePattern',
+        ruleJSON: ruleJSON,
+        fieldJSONstring: fieldJSONstring,
+      },
+      url: 'customPatternServlet',
       success: function (result) {
         var json = JSON.parse(result);
         document.getElementById('generatedPatternTextArea').value = String(
@@ -162,13 +155,14 @@ export default class ModalComponent extends Component {
 
     ruleJSON += fieldJSONstring + '}';
 
-    console.log(ruleJSON);
-    console.log(fieldJSONstring);
-
     $.ajax({
       type: 'POST',
-      data: { ruleJSON: ruleJSON, fieldJSONstring: fieldJSONstring },
-      url: 'addPattern',
+      data: {
+        operation: 'addPattern',
+        ruleJSON: ruleJSON,
+        fieldJSONstring: fieldJSONstring,
+      },
+      url: 'customPatternServlet',
       success: function (result) {},
     });
   }
@@ -176,9 +170,6 @@ export default class ModalComponent extends Component {
   @action
   applyChangesToModalTable() {
     var table = document.getElementById('modalFieldTable');
-
-    // console.log("prefix : " + $('#modalPrefix').is(":checked"));
-    // console.log("suffix : " + $('#modalSuffix').is(":checked"));
 
     if ($('#modalPrefix').is(':checked')) {
       $('#modalPrefixColumn').removeClass('d-none');
